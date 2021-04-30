@@ -11,7 +11,7 @@ print(sentencias.head())
 
 print(sentencias.head())
 
-~# %% 
+# %% 
 # dicc. del equipo de integrantes del equipo
 correos_equipo = {
      'Fede': '',
