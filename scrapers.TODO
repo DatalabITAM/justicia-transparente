@@ -1,0 +1,50 @@
+# Objetivo: Desarrollo de scrapers (Spiders) para la recolección de sentencias
+            de resoluciones penales para cada estado de la república.
+
+Nuevo Leon:
+    ✔ Obtener links[ValeMan] @done(21-08-31 13:34)
+    Desarrollo de Spider:
+        Recolector de información de página actual:
+            ✔ Iterador de sentencias[David] @done(21-08-31 13:43)
+            Procesamiento de información:
+                ✔ Limpieza de datos[David] @done(21-08-31 13:43)
+                ✔ Obtención de links del visor[David] @done(21-08-31 13:43) 
+                ☐ Obtención de links de descarga pdf.[David]
+        Navegador de páginas:
+            ✔ Navegador de paginas.[David] @done(21-08-31 13:44)
+            ✔ Agregación de información.[David] @done(21-08-31 13:45)
+        Actualizador de información:
+            ☐ Lector de datos existentes.
+            ☐ Verificador de duplicidad.
+        Recopilador de información:
+            ☐ Saver de información recopilada.
+        Programador de tarea:
+            ☐ Determinar plazos de actualización.
+            ☐ Implementar en maquina propia o virtual
+
+Coahuila:
+    ☐ Obtener links
+    Desarrollo de Spider:
+        Recolector de información de página actual:
+            ☐ Iterador de sentencias
+            Procesamiento de información:
+                ☐ Limpieza de datos
+                ☐ Obtención de links del visor
+                ☐ Obtención de links de descarga pdf.
+        Navegador de páginas:
+            ☐ Navegador de paginas.
+            ☐ Agregación de información.
+        Actualizador de información:
+            ☐ Lector de datos existentes.
+            ☐ Verificador de duplicidad.
+        Recopilador de información:
+            ☐ Saver de información recopilada.
+        Programador de tarea:
+            ☐ Determinar plazos de actualización.
+            ☐ Implementar en maquina propia o virtual
+        
+
+
+            
+            
+
