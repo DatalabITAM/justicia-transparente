@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup as bs
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import re
 import math
 from sys import stdout
@@ -18,10 +19,11 @@ import time
 class NuevoLeonSpider:
 
 
-    def __init__(self, url = 'https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx', headless = False):
+    def __init__(self, url = 'https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx', headless = False, debug = True):
         '''
         Iniciamos Spider en la pagina de sentencias de Nuevo Leon.
         '''
+        self.debug = debug
         self.url = url
         self.options = Options()
         self.options.add_argument("--disable-extensions")
@@ -33,7 +35,8 @@ class NuevoLeonSpider:
             # self.options.add_argument("--no-sandbox") # linux only
         self.driver = webdriver.Chrome(options=self.options)
         self.driver.get(url)
-        self.data, self.page_index = pd.read_html(self.driver.page_source)
+        temp_data, self.page_index = pd.read_html(self.driver.page_source)
+        self.data = temp_data.loc[::-2]
         self.page_index = self.page_index.loc[0]
         self.visor_soup = None
         self.pdf_sources = []
@@ -43,6 +46,7 @@ class NuevoLeonSpider:
     def get_tables(self):
         if self.page % 10 != 0:
             temp_data, __ = pd.read_html(self.driver.page_source)
+            temp_data = temp_data.loc[::-2]
         else:
             temp_data, self.page_index = pd.read_html(self.driver.page_source)
             self.page_index = self.page_index.loc[0]
@@ -76,62 +80,106 @@ class NuevoLeonSpider:
     def page_crawler(self):
         if self.page != 1:
             self.get_tables()
-        tries = 0
-        while tries < 5:
-            try:
-                pdf_css_names = self.find_buttons('pdf')
-                break
-            except:
-                time.sleep(2)
-                tries += 1
-                if tries == 5:
-                    raise KeyboardInterrupt
-        for pdf_name in pdf_css_names:
-            while tries < 5:
+            self.driver.execute_script("scrollBy(0,-100000);")
+
+        
+        pdf_css_names = self.find_buttons('pdf')
+            
+        for pdf_css_selector in pdf_css_names:
+            t0 = time.time()
+            timeout = 0
+            while timeout < 30:
                 try:
-                    self.driver.find_element_by_css_selector(pdf_name).click()
+                    if self.debug:
+                        print(pdf_css_selector)
+                    element = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, pdf_css_selector)))
+                    element.click()
                     break
-                except:
-                    time.sleep(2)
-                    tries += 1
-                    if tries == 5:
-                        raise KeyboardInterrupt
+                except Exception as e:
+                    timeout = time.time() - t0
+                    time.sleep(.2)
+                    if timeout >= 30:
+                        print(e)
+                        raise KeyboardInterrupt 
+                    try:
+                        element.click()
+                        break
+                    except:
+                        pass
             self.visor_soup = bs(self.driver.page_source.encode('utf8'), 'html.parser')
             self.pdf_sources.append('https://www.pjenl.gob.mx' +  self.visor_soup.find('iframe')['src'])
-            tries = 0
-            while tries < 5:
-                time.sleep(2)
-                try:
-                    self.driver.find_element_by_class_name('btn-default').click()
-                    break
-                except:
-                    time.sleep(2)
-                    tries += 1
-                    if tries == 5:
-                        raise KeyboardInterrupt
-    
+            self.close_viewer()
+            
+                
+    def close_viewer(self):
+        # Close pdf - viewer
+        timeout = 0
+        t_null = time.time()
+        while timeout<20:
+            try:
+                WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-default"))).click()
+                WebDriverWait(spider.driver,5).until_not(EC.visibility_of_element_located((By.CLASS_NAME, 'btn-default')))
+                break
+            except Exception as e:
+                timeout = t_null - time.time()
+                if timeout >= 20:
+                    print(e)
+                    raise KeyboardInterrupt
+
+
     def crawl(self):
         while self.page < self.last_page:
             stdout.write(f'Page {self.page} of {self.last_page}')
             if self.last_page == math.inf and self.page_index.iloc[-1] != '...':
                 self.last_page = self.page_index.iloc[-2]
             self.page_crawler()
-            if self.page < self.last_page:
-                self.page += 1
-                element = self.driver.find_element_by_link_text(str(self.page))
-                self.driver.execute_script("arguments[0].click();", element)
+            self.next_page()
             stdout.write('\r')
     
+    def next_page(self):
+        if self.page < self.last_page:
+            self.page += 1              
+            t0 = time.time()
+            timeout = 0
+            while timeout<15:
+                try:
+                    WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT, str(self.page)))).click()
+                    break
+                except:
+                    pass
+                time.sleep(0.2)
+                timeout = time.time() - t0
+            WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT, str(self.page+1))))
+            
+        
+
     def spit(self, path = 'data.xlsx'):
         self.data.to_excel(path)
         return self.data
 
-    def squash(self):
+    def kill(self):
         self.driver.quit()
                 
             
 # %%
 spider = NuevoLeonSpider()
-spider.crawl()
 
+# %%
+# %%
+spider.crawl()
+# %%
+spider.kill()
+# %%
+spider.driver.find_element_by_class_name('btn-default')
+
+# %%
+spider.
+# %%
+
+# %%
+btn_0 = '#ContentPlaceHolder1_gdvPenal_ImgBtnSentencia_0'
+# %%
+
+# %%
+spider.driver.ScrollTo(0,0)
 # %%
