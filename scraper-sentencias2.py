@@ -16,7 +16,7 @@ import time
 
 class NuevoLeonSpider:
 
-    def __init__(self, url = 'https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx', debug = True, last_page = None):
+    def __init__(self, data = None, url = 'https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx', debug = True, last_page = None):
         '''
         Iniciamos Spider en la pagina de sentencias de Nuevo Leon.
         '''
@@ -34,9 +34,13 @@ class NuevoLeonSpider:
         self.driver = webdriver.Chrome(options=self.options)
         self.driver.get(url)
         temp_data, self.page_index = pd.read_html(self.driver.page_source)
-        self.data = temp_data.iloc[0:20,0:8]
+        if data == None:
+            self.data = data
+        else:
+            self.data = pd.DataFrame.from_records(data)
         self.page_index = self.page_index.loc[0]
-        self.visor_soup = None
+        self.soup = bs(self.driver.page_source.encode('utf8'), 'html.parser')
+        self.total_sentences = int(self.soup.find('span', {'id':'lblTotalPenal'}).text)
         if last_page == None:
             self.last_page = math.inf
         else:
@@ -49,7 +53,10 @@ class NuevoLeonSpider:
         else:
             temp_data, self.page_index = pd.read_html(self.driver.page_source)
             self.page_index = self.page_index.loc[0]
-        self.data = self.data.append(temp_data)
+        if isinstance(self.data, pd.DataFrame):
+            self.data = self.data.append(temp_data)
+        else:
+            self.data = temp_data
     
     def fill_hrefs(self, hrefs_arr):
         self.data.loc[self.data['Sentencia'].isna(), 'Sentencia'] = hrefs_arr
@@ -79,17 +86,22 @@ class NuevoLeonSpider:
         return elements
 
     def crawl_page(self):
+        self.get_tables()
         if self.page != 1:
-            self.get_tables()
             self.driver.execute_script("scrollBy(0,-100000);")
         pdf_css_names = self.find_buttons('pdf')
         hrefs_arr = []
         for pdf_css_selector in pdf_css_names:
             self.open_viewer(pdf_css_selector)
-            self.visor_soup = bs(self.driver.page_source.encode('utf8'), 'html.parser')
-            hrefs_arr.append('https://www.pjenl.gob.mx' +  self.visor_soup.find('iframe')['src'])
+            WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-default")))
+            visor_soup = bs(self.driver.page_source.encode('utf8'), 'html.parser')
+            if self.debug:
+                print('https://www.pjenl.gob.mx' +  visor_soup.find('iframe')['src'])
+            hrefs_arr.append('https://www.pjenl.gob.mx' +  visor_soup.find('iframe')['src'])
             self.close_viewer()
         self.fill_hrefs(hrefs_arr)
+        # duplicate checks
+        self.data.drop_duplicates(['Sentencia'], keep = 'first', inplace =True)
 
     def open_viewer(self, pdf_css_selector):
         t0 = time.time()
@@ -129,17 +141,23 @@ class NuevoLeonSpider:
                     raise KeyboardInterrupt
 
     def crawl(self, only_pages = False):
-        while self.page < self.last_page:
+        try:
+            not_complete  = len(self.data) < self.total_sentences
+        except:
+            not_complete = True
+            
+        while self.page < self.last_page and not_complete:
             stdout.write(f'Page {self.page} of {self.last_page}')
             if self.last_page == math.inf and self.page_index.iloc[-1] != '...':
                 self.last_page = self.page_index.iloc[-2]
             if not only_pages:
                 self.crawl_page()
             self.next_page()
-            stdout.write('\r')
+            if not self.debug:
+                stdout.write('\r')
+
         self.fill_links()
         
-    
     def next_page(self):
         if self.page < self.last_page:
             t0 = time.time()
@@ -207,15 +225,20 @@ class NuevoLeonSpider:
         print("Spider's dead.")
                 
 # %%
-from pathlib import Path
-path = Path('sentencias_400.xlsx').resolve()
-spider = NuevoLeonSpider(debug =False, last_page = 10)
-spider.crawl(only_pages=False)
-spider.spit(path)
+
+spider = NuevoLeonSpider(debug = False, data = data)
+
+#%%
+spider.crawl()
 
 # %%
 spider.kill()
 
-
+# from pathlib import Path
+# path = Path('sentencias_400.xlsx').resolve()
+# spider = NuevoLeonSpider(debug =False, last_page = 10)
+# spider.crawl(only_pages=False)
+# spider.spit(path)
+# spider.kill()
 
 # %%
