@@ -6,7 +6,7 @@ permalink: /quienes-somos/
 ### El equipo:
 - lespam
 - valeman
-
+- *david*
 
 
 
