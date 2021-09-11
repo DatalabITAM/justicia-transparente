@@ -9,13 +9,13 @@ Nuevo Leon:
             Procesamiento de información:
                 ✔ Limpieza de datos[David] @done(21-08-31 13:43)
                 ✔ Obtención de links del visor[David] @done(21-08-31 13:43) 
-                ☐ Obtención de links de descarga pdf.[David]
+                ✔ Obtención de links de descarga pdf.[David] @done(21-09-06 17:20)
         Navegador de páginas:
             ✔ Navegador de paginas.[David] @done(21-08-31 13:44)
             ✔ Agregación de información.[David] @done(21-08-31 13:45)
         Actualizador de información:
-            ☐ Lector de datos existentes.
-            ☐ Verificador de duplicidad.
+            ✔ Lector de datos existentes[David]. @done(21-09-08 00:43)
+            ✔ Verificador de duplicidad[David]. @done(21-09-08 00:43)
         Recopilador de información:
             ☐ Saver de información recopilada.
         Programador de tarea:
