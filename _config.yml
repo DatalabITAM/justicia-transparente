@@ -29,20 +29,8 @@ github_username:  datalabitam
 
 # Build settings
 theme: minima
-remote_theme: jekyll/minima
 plugins:
   - jekyll-feed
-
-lsi: false
-safe: true
-source: https://github.com/DatalabITAM/justicia-transparente
-incremental: false
-highlighter: rouge
-gist:
-  noscript: false
-kramdown:
-  math_engine: mathjax
-  syntax_highlighter: rouge
 
 # Exclude from processing.
 # The following items will not be processed, by default.
