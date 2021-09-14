@@ -4,3 +4,7 @@
 
 layout: home
 ---
+> Debemos acometer una evolución profunda. No queremos un proceso de apertura simulada, sino ejercicios de justicia abierta que ayuden a este país a resolver conflictos. -- Edna Jaime
+
+
+Bienvenidos a nuestro proyecto :)
