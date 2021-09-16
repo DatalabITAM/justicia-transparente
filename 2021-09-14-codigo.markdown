@@ -4,7 +4,7 @@ title:  "Código!"
 date:   2021-09-14 00:35:53 -0400
 categories: code
 ---
-# Codigo de scrapping
+# Código de scraping
 
 @nombre1
 @nombre2
