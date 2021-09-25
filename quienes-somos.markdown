@@ -5,6 +5,7 @@ permalink: /quienes-somos/
 ---
 
 Leslie
+  Estudie Ing. en Computacion en el ITAM. Y me gusta programar :)
 Valeria
 David
 etc..
