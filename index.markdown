@@ -8,3 +8,21 @@ layout: home
 
 
 Bienvenidos a nuestro proyecto :)
+
+
+## Objetivos
+
+
+### Por que lo hacemos
+
+
+### Que queremos lograr
+
+
+Describir el proceso en corto: con link a la pagina mas detallada de Codigo.
+
+### Casos de uso:
+
+### Cuales son los siguientes pasos:
+
+Agregar la BD aunque sea con un link. []
