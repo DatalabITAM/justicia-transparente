@@ -23,76 +23,77 @@ Dicho lo anterior, podemos afirmar que hemos conseguido recopilar, a través de 
 
 
 {% highlight python %}
-import requests
-from bs4 import BeautifulSoup
-from selenium import webdriver
-import time
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.keys import Keys
-import pandas as pd
 
-def check_exists_by_xpath(webdriver, xpath):
-    """
-        Regresa True si existe el elemento con el xpath dado, sino False
-    """
-    try:
-        webdriver.find_element_by_xpath(xpath)
-    except NoSuchElementException:
-        return False
-    return True
+    import requests
+    from bs4 import BeautifulSoup
+    from selenium import webdriver
+    import time
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.common.exceptions import NoSuchElementException
+    from selenium.webdriver.common.keys import Keys
+    import pandas as pd
 
-
-def selectOpc(driver,xpathDiv1, xpathDivOpc, pos):
-    """
-        Selecciona la opción localizada en la posición pos de xpathDivOpc
-        driver: driver del navegador
-        xpathDiv1:
-    """
-    #Damos click para que aparezca el div de opciones
-        # Corrijo bug -- FDM
-    element = driver.find_element_by_xpath(xpathDiv1)
-    driver.execute_script("arguments[0].click();", element)
-    #Div de opciones
-    opcs = driver.find_element_by_xpath(xpathDivOpc).find_elements_by_tag_name("div") 
-    #Damos clic a la opción
-    try:
-        driver.execute_script("arguments[0].click();",  opcs[pos])
-    except Exception as e:
-        print(str(e))
-        print(f"Element {opcs[pos]} not clickable")
+    def check_exists_by_xpath(webdriver, xpath):
+        """
+            Regresa True si existe el elemento con el xpath dado, sino False
+        """
+        try:
+            webdriver.find_element_by_xpath(xpath)
+        except NoSuchElementException:
+            return False
+        return True
 
 
-def getSizeByTag(driver, xpath, tag):
-    """
-        Dada un xpath busca todos los elementos con el tag dado y regresa el tamaño
-    """
-    return len(driver.find_element_by_xpath(xpath).find_elements_by_tag_name(tag))
+    def selectOpc(driver,xpathDiv1, xpathDivOpc, pos):
+        """
+            Selecciona la opción localizada en la posición pos de xpathDivOpc
+            driver: driver del navegador
+            xpathDiv1:
+        """
+        #Damos click para que aparezca el div de opciones
+            # Corrijo bug -- FDM
+        element = driver.find_element_by_xpath(xpathDiv1)
+        driver.execute_script("arguments[0].click();", element)
+        #Div de opciones
+        opcs = driver.find_element_by_xpath(xpathDivOpc).find_elements_by_tag_name("div") 
+        #Damos clic a la opción
+        try:
+            driver.execute_script("arguments[0].click();",  opcs[pos])
+        except Exception as e:
+            print(str(e))
+            print(f"Element {opcs[pos]} not clickable")
 
 
-def doClick(driver, xpath):
-    try:
-        driver.find_element_by_xpath(xpath).click()
-    except:
-        print(f"{xpath} not clickable")
+    def getSizeByTag(driver, xpath, tag):
+        """
+            Dada un xpath busca todos los elementos con el tag dado y regresa el tamaño
+        """
+        return len(driver.find_element_by_xpath(xpath).find_elements_by_tag_name(tag))
 
 
-def getElementsByTag(driver, xpath, tag):
-    element = driver.find_element_by_xpath(xpath).find_elements_by_tag_name(tag)
-    return element
+    def doClick(driver, xpath):
+        try:
+            driver.find_element_by_xpath(xpath).click()
+        except:
+            print(f"{xpath} not clickable")
 
-def checkTable(driver, oneTable):
-    rowsPath = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody'
-    btnCerrarVisor = '//\*[@id="modalPDF"]/div/div/div[3]/button'    
-    visorPDF = '//\*[@id="ContentPlaceHolder1_framePDF"]'
-    rows = getElementsByTag(driver, rowsPath, "tr")
-    pdf_links = []                    
-    if oneTable:
-        nr = len(rows) 
-    else:
-        nr = len(rows)-1
+
+    def getElementsByTag(driver, xpath, tag):
+        element = driver.find_element_by_xpath(xpath).find_elements_by_tag_name(tag)
+        return element
+
+    def checkTable(driver, oneTable):
+        rowsPath = '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody'
+        btnCerrarVisor = '//*[@id="modalPDF"]/div/div/div[3]/button'    
+        visorPDF = '//*[@id="ContentPlaceHolder1_framePDF"]'
+        rows = getElementsByTag(driver, rowsPath, "tr")
+        pdf_links = []                    
+        if oneTable:
+            nr = len(rows) 
+        else:
+            nr = len(rows)-1
 
     # Get table data with beautiful soup
     
@@ -142,7 +143,7 @@ def checkTable(driver, oneTable):
         j += 1                        
 
         #Boton descargar
-        #//\*[@id="download"]    
+        #//*[@id="download"]    
     time.sleep(8)
     df[titles[7].text] = pdf_links
     print(df)
@@ -154,17 +155,17 @@ def checkTable(driver, oneTable):
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
-    divJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[1]'
-    divOpcJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[2]/div'
-    divDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[1]'
-    divOpcDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[2]/div'
-    divCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[1]'
-    divOpcCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[2]/div'
-    divResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[1]'
-    divOpcResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[2]/div'
-    btnBuscar = '//\*[@id="ContentPlaceHolder1_BtnBuscar"]'
-    tabla = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'
-    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+    divJuzgado = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[1]'
+    divOpcJuzgado = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[2]/div'
+    divDelitos = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[1]'
+    divOpcDelitos = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[2]/div'
+    divCriterios = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[1]'
+    divOpcCriterios = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[2]/div'
+    divResolucion = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[1]'
+    divOpcResolucion = '//*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[2]/div'
+    btnBuscar = '//*[@id="ContentPlaceHolder1_BtnBuscar"]'
+    tabla = '//*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'
+    indexList = '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
 
     lista_dfs = []
 
@@ -210,7 +211,7 @@ def checkTable(driver, oneTable):
                 if check_exists_by_xpath(driver, tabla):
                     #Hay tabla
 
-                    if check_exists_by_xpath(driver, '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/                                                          tbody/tr'):        
+                    if check_exists_by_xpath(driver, '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/                                                          tbody/tr'):        
                         first = True
                         while True:
                             ind = getElementsByTag(driver,indexList, "a")
@@ -229,7 +230,7 @@ def checkTable(driver, oneTable):
                                 df1 = checkTable(driver,False)
                                 lista_dfs.append(df1)
                                 # Por alguna razón después de recorrer la tabla cambia el html y el encabezado se hace                                    parte de las filas y deja de existir el thead
-                                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
+                                indexList = '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
                                 try: 
                                     ind = getElementsByTag(driver,indexList, "a")
                                     ind[i].click()
@@ -242,7 +243,7 @@ def checkTable(driver, oneTable):
                                 time.sleep(30)
                                 driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)  
                                 #Después de que cambiamos de página el html regresa a lo normal y el thead ya existe de nuevo
-                                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+                                indexList = '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
                                 ind = getElementsByTag(driver,indexList, "a")              
                             time.sleep(30)
                         #Ya estamos en la última página de sentencias
@@ -264,12 +265,12 @@ def checkTable(driver, oneTable):
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
-    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'            
+    indexList = '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'            
 
     print("Entra")
-    if check_exists_by_xpath(driver,'//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'):
+    if check_exists_by_xpath(driver,'//*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'):
         #Hay tabla    
-        if check_exists_by_xpath(driver, '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'):        
+        if check_exists_by_xpath(driver, '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'):        
             first = True
             while True:
                 ind = getElementsByTag(driver,indexList, "a")
@@ -288,7 +289,7 @@ def checkTable(driver, oneTable):
                     checkTable(driver,False) 
                     #Por alguna razón después de recorrer la tabla cambia el html y el encabezado se hace parte
                     # de las filas y deja de existir el thead
-                    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
+                    indexList = '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
                     ind = getElementsByTag(driver,indexList, "a")
                     ind[i].click()           
                     if(ind[i].get_attribute("text") == "..."):
@@ -298,7 +299,7 @@ def checkTable(driver, oneTable):
                     time.sleep(30)
                     driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)  
                     #Después de que cambiamos de página el html regresa a lo normal y el thead ya existe de nuevo
-                    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+                    indexList = '//*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
                     ind = getElementsByTag(driver,indexList, "a")              
                 time.sleep(30)
             #Ya estamos en la última página de sentencias
