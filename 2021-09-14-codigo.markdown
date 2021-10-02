@@ -6,31 +6,307 @@ categories: code
 ---
 # Código de scraping
 
-@nombre1
-@nombre2
+@Emilio
+@David
 
-Explicacion del codigo aqui
+Nuestro equipo se ha encargado de diseñar algoritmos que permitan extraer de manera automática información referente a las decisiones judiciales hechas por los jueces de nuestro país. Específicamente, se ha estado trabajando en un algoritmo computacional (conocido como *web scraping*) que permita capturar sentencias emitidas por los órganos judiciales de cada estado.
 
-You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run `jekyll serve`, which launches a web server and auto-regenerates your site when a file is updated.
 
-Jekyll requires blog post files to be named according to the following format:
+Ahora bien, nuestra labor ha encontrado varios obstáculos como, por ejemplo: la falta de transparencia en algunos estados que se traduce en la imposibilidad de encontrar las sentencias, a pesar de que la Ley de Transparencia obliga a que todas las sentencias deben hacerse públicas. No obstante, decidimos dejar de lado esta cuestión y enfocarnos exclusivamente en las sentencias que son públicas.
 
-`YEAR-MONTH-DAY-title.MARKUP`
+Varios estados han subido a la red las sentencias, sin embargo, cada estado tiene una forma diferente de presentar información. Esto, sin duda alguna, ha sido un reto, pues para recopilar las sentencias se ha tenido que diseñar más de un algoritmo, pues la heterogeneidad de las paginas impide usar el mismo. 
+En consecuencia, nuestro trabajo ha consistido en utilizar herramientas de programación como Python y sus diversas librerías para crear un algoritmo o web scraping capaz de entender el repositorio de las sentencias para que, de forma automatizada, pueda capturar sentencias e información relevante para alguna persona. El objetivo final es que cualquier usuario pueda acceder a la totalidad de sentencias ahora o en el futuro de una forma rápida y sencilla. 
 
-Where `YEAR` is a four-digit number, `MONTH` and `DAY` are both two-digit numbers, and `MARKUP` is the file extension representing the format used in the file. After that, include the necessary front matter. Take a look at the source for this post to get an idea about how it works.
+El principal reto que enfrenta el equipo son los diseños de los algoritmos. Estos deben estar hechos a la medida de la pagina web en la que se encuentran las sentencias. Se debe comentar que las páginas web no tienen una estructura clara, lo que dificulta el proceso para producir el algoritmo, en consecuencia, se necesita más tiempo para encontrar herramientas que permitan el correcto funcionamiento del algoritmo. Este proceso requiere tiempo y repetición, ya que a medida que el algoritmo se vuelve más complejo, es más difícil de encontrar errores en el proceso.
 
-Jekyll also offers powerful support for code snippets:
+Dicho lo anterior, podemos afirmar que hemos conseguido recopilar, a través de nuestro web scraping, sentencias del estado de Coahuila sin ningún tipo de problema. Nuestra meta es que en las siguientes semanas y meses seamos capaces de recopilar sentencias y demás información de los estados que tienen su información pública.  
 
-{% highlight ruby %}
-def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=> prints 'Hi, Tom' to STDOUT.
+
+{% highlight python %}
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.keys import Keys
+import pandas as pd
+
+def check_exists_by_xpath(webdriver, xpath):
+    """
+        Regresa True si existe el elemento con el xpath dado, sino False
+    """
+    try:
+        webdriver.find_element_by_xpath(xpath)
+    except NoSuchElementException:
+        return False
+    return True
+
+
+def selectOpc(driver,xpathDiv1, xpathDivOpc, pos):
+    """
+        Selecciona la opción localizada en la posición pos de xpathDivOpc
+        driver: driver del navegador
+        xpathDiv1:
+    """
+    #Damos click para que aparezca el div de opciones
+        # Corrijo bug -- FDM
+    element = driver.find_element_by_xpath(xpathDiv1)
+    driver.execute_script("arguments[0].click();", element)
+    #Div de opciones
+    opcs = driver.find_element_by_xpath(xpathDivOpc).find_elements_by_tag_name("div") 
+    #Damos clic a la opción
+    try:
+        driver.execute_script("arguments[0].click();",  opcs[pos])
+    except Exception as e:
+        print(str(e))
+        print(f"Element {opcs[pos]} not clickable")
+
+
+def getSizeByTag(driver, xpath, tag):
+    """
+        Dada un xpath busca todos los elementos con el tag dado y regresa el tamaño
+    """
+    return len(driver.find_element_by_xpath(xpath).find_elements_by_tag_name(tag))
+
+
+def doClick(driver, xpath):
+    try:
+        driver.find_element_by_xpath(xpath).click()
+    except:
+        print(f"{xpath} not clickable")
+
+
+def getElementsByTag(driver, xpath, tag):
+    element = driver.find_element_by_xpath(xpath).find_elements_by_tag_name(tag)
+    return element
+
+def checkTable(driver, oneTable):
+    rowsPath = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody'
+    btnCerrarVisor = '//\*[@id="modalPDF"]/div/div/div[3]/button'    
+    visorPDF = '//\*[@id="ContentPlaceHolder1_framePDF"]'
+    rows = getElementsByTag(driver, rowsPath, "tr")
+    pdf_links = []                    
+    if oneTable:
+        nr = len(rows) 
+    else:
+        nr = len(rows)-1
+
+    # Get table data with beautiful soup
+    
+    html = driver.page_source
+    sopa = BeautifulSoup(html, 'html.parser')
+    tds = sopa.find_all("td", {"style": ["width:7%;", "width:15%;", "width:9%;", "width:12%;", "width:2%;"]})
+    titles = sopa.find_all("th")
+    lista_ds = []
+    i = 0
+    while i < len(tds):
+        d = {}
+        d[titles[1].text] = tds[i].text
+        d[titles[2].text] = tds[i + 1].text
+        d[titles[3].text] = tds[i + 2].text
+        d[titles[4].text] = tds[i + 3].text
+        d[titles[5].text] = tds[i + 4].text
+        d[titles[6].text] = tds[i + 5].text
+        d[titles[7].text] = tds[i + 6].text
+        lista_ds.append(d)
+        i += 7
+    df = pd.DataFrame.from_dict(lista_ds)
+    j = 0
+    while (j < len(df['Sentencia'])):
+        rows = getElementsByTag(driver, rowsPath, "tr")
+
+        cols = rows[j].find_elements_by_tag_name("td")
+        nCol = len(cols)
+        
+        # for y in range(nCol-1):
+            # print(cols[y].get_attribute("innerHTML"))
+                                
+        #Abrir pdf para obtener link
+        try:
+            cols[nCol-1].click()
+        except Exception as e:
+            print(str(e))
+            print(f"Element {cols[nCol-1]} not clickable")                    
+        #Esperamos a que cargue
+        time.sleep(4)        
+                           
+        pdf_link = driver.find_element_by_xpath(visorPDF).get_attribute('src')
+        pdf_links.append(pdf_link)
+
+        #Cerrar el visor
+        time.sleep(4)
+        doClick(driver, btnCerrarVisor)
+        j += 1                        
+
+        #Boton descargar
+        #//\*[@id="download"]    
+    time.sleep(8)
+    df[titles[7].text] = pdf_links
+    print(df)
+    return df
+
+#Variar Tipo de Juzgado, Delitos-Modalidades,  Criterios , Tipo de resolución
+#Checar el comentario del primer for (i1)
+
+driver = webdriver.Chrome()
+driver.maximize_window()
+driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
+divJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[1]'
+divOpcJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[2]/div'
+divDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[1]'
+divOpcDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[2]/div'
+divCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[1]'
+divOpcCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[2]/div'
+divResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[1]'
+divOpcResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[2]/div'
+btnBuscar = '//\*[@id="ContentPlaceHolder1_BtnBuscar"]'
+tabla = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'
+indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+
+lista_dfs = []
+
+# Tipo de juzgado ----------------------------------------------------
+selectOpc(driver,divJuzgado,divOpcJuzgado, 0)
+t1 = getSizeByTag(driver, divOpcJuzgado, "div")
+
+#Si ya es la versión final hay que cambiar el for para que empiece con 1.
+
+#Empieza en 2 para probar
+for i1 in range(2,t1):                                     
+    selectOpc(driver,divJuzgado,divOpcJuzgado, i1)   
+
+    #Delitos - Modalidades  ----------------------------------------------  
+    selectOpc(driver, divDelitos, divOpcDelitos, 0)        
+    t2 = getSizeByTag(driver, divOpcDelitos,"div")
+    time.sleep(1)
+
+    #Las primeras 7 son Ver todos y opciones vacías
+    for i2 in range(7,t2):                           
+        selectOpc(driver, divDelitos, divOpcDelitos, i2)
+        time.sleep(1)        
+
+        #Criterios Específicos ----------------------------------------------      
+        selectOpc(driver, divCriterios ,divOpcCriterios , 0)                              
+        t3 = getSizeByTag(driver, divOpcCriterios,"div")
+
+        for i3 in range(t3):             
+            selectOpc(driver, divCriterios ,divOpcCriterios , i3)               
+
+            #Tipo resolución --------------------------------------------------                    
+            selectOpc(driver, divResolucion, divOpcResolucion, 0)
+            t4 = getSizeByTag(driver, divOpcResolucion,"div")
+
+            for i4 in range(1, t4):                      
+                selectOpc(driver, divResolucion, divOpcResolucion, i4)
+
+                #Hacemos consulta -----------------------------------------------
+                doClick(driver, btnBuscar)
+                time.sleep(3)
+                #Pendiente Checar si ya dio el resultado en lugar de poner 3 segundos    
+                                
+                if check_exists_by_xpath(driver, tabla):
+                    #Hay tabla
+
+                    if check_exists_by_xpath(driver, '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/                                                          tbody/tr'):        
+                        first = True
+                        while True:
+                            ind = getElementsByTag(driver,indexList, "a")
+                            if ind[-1].get_attribute("text") != "...":
+                                break
+                            # First sirve para saber en que index empezar, porque solo las primeras 10 son de las forma                               [1,..., 10, "..."]
+                            # En ese caso empezamos en 0.
+                            # Las demás serán  ["...", n, n+1, ..., n+9, "..."] entonces hay que empezar en 1, sino se                                regresa a las anteriores
+                            if first:
+                                i = 0
+                                first=False
+                            else:
+                                i = 1
+                            start = True
+                            while ind[-1].get_attribute("text") == "...":  
+                                df1 = checkTable(driver,False)
+                                lista_dfs.append(df1)
+                                # Por alguna razón después de recorrer la tabla cambia el html y el encabezado se hace                                    parte de las filas y deja de existir el thead
+                                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
+                                try: 
+                                    ind = getElementsByTag(driver,indexList, "a")
+                                    ind[i].click()
+                                except:
+                                    pass           
+                                if(ind[i].get_attribute("text") == "..."):
+                                    break                                
+                                i += 1
+                                #Este es opcional, hay que buscar una manera de saber cuando ya cargó la página                
+                                time.sleep(30)
+                                driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)  
+                                #Después de que cambiamos de página el html regresa a lo normal y el thead ya existe de nuevo
+                                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+                                ind = getElementsByTag(driver,indexList, "a")              
+                            time.sleep(30)
+                        #Ya estamos en la última página de sentencias
+                        df2 = checkTable(driver,False)
+                        lista_dfs.append(df2)                                                        
+                    else:
+                        df3 = checkTable(driver,True)
+                        lista_dfs.append(df3)
+                    print(lista_dfs)
+
+
+lista_dfs
+
+df_final = pd.concat(lista_dfs, ignore_index = True)
+df_final
+
+driver.quit()
+
+driver = webdriver.Chrome()
+driver.maximize_window()
+driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
+indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'            
+
+print("Entra")
+if check_exists_by_xpath(driver,'//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'):
+    #Hay tabla    
+    if check_exists_by_xpath(driver, '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'):        
+        first = True
+        while True:
+            ind = getElementsByTag(driver,indexList, "a")
+            if ind[-1].get_attribute("text") != "...":
+                break
+            #First sirve para saber en que index empezar, porque solo las primeras 10 son de las forma [1,..., 10, "..."]
+            #En ese caso empezamos en 0.
+            #Las demás serán  ["...", n, n+1, ..., n+9, "..."] entonces hay que empezar en 1, sino se regresa a las anteriores
+            if first:
+                i = 0
+                first=False
+            else:
+                i=1
+            start = True
+            while ind[-1].get_attribute("text") == "...":  
+                checkTable(driver,False) 
+                #Por alguna razón después de recorrer la tabla cambia el html y el encabezado se hace parte
+                # de las filas y deja de existir el thead
+                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
+                ind = getElementsByTag(driver,indexList, "a")
+                ind[i].click()           
+                if(ind[i].get_attribute("text") == "..."):
+                    break                                
+                i+=1
+                #Este es opcional, hay que buscar una manera de saber cuando ya cargó la página                
+                time.sleep(30)
+                driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)  
+                #Después de que cambiamos de página el html regresa a lo normal y el thead ya existe de nuevo
+                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+                ind = getElementsByTag(driver,indexList, "a")              
+            time.sleep(30)
+        #Ya estamos en la última página de sentencias
+        checkTable(driver,False)
+        
+                
+    else:
+        checkTable(driver,True)
+        
 {% endhighlight %}
 
-Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].
-
-[jekyll-docs]: https://jekyllrb.com/docs/home
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-talk]: https://talk.jekyllrb.com/
