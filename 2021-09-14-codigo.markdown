@@ -148,35 +148,35 @@ def checkTable(driver, oneTable):
     print(df)
     return df
 
-#Variar Tipo de Juzgado, Delitos-Modalidades,  Criterios , Tipo de resolución
-#Checar el comentario del primer for (i1)
+    #Variar Tipo de Juzgado, Delitos-Modalidades,  Criterios , Tipo de resolución
+    #Checar el comentario del primer for (i1)
 
-driver = webdriver.Chrome()
-driver.maximize_window()
-driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
-divJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[1]'
-divOpcJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[2]/div'
-divDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[1]'
-divOpcDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[2]/div'
-divCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[1]'
-divOpcCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[2]/div'
-divResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[1]'
-divOpcResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[2]/div'
-btnBuscar = '//\*[@id="ContentPlaceHolder1_BtnBuscar"]'
-tabla = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'
-indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
+    divJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[1]'
+    divOpcJuzgado = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[1]/div/div/div[2]/div'
+    divDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[1]'
+    divOpcDelitos = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[2]/div/div/div[2]/div'
+    divCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[1]'
+    divOpcCriterios = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[5]/div/div/div[2]/div'
+    divResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[1]'
+    divOpcResolucion = '//\*[@id="ContentPlaceHolder1_ctl00"]/div[2]/div/div[1]/div[6]/div/div/div[2]/div'
+    btnBuscar = '//\*[@id="ContentPlaceHolder1_BtnBuscar"]'
+    tabla = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'
+    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
 
-lista_dfs = []
+    lista_dfs = []
 
-# Tipo de juzgado ----------------------------------------------------
-selectOpc(driver,divJuzgado,divOpcJuzgado, 0)
-t1 = getSizeByTag(driver, divOpcJuzgado, "div")
+    # Tipo de juzgado ----------------------------------------------------
+    selectOpc(driver,divJuzgado,divOpcJuzgado, 0)
+    t1 = getSizeByTag(driver, divOpcJuzgado, "div")
 
-#Si ya es la versión final hay que cambiar el for para que empiece con 1.
+    #Si ya es la versión final hay que cambiar el for para que empiece con 1.
 
-#Empieza en 2 para probar
-for i1 in range(2,t1):                                     
-    selectOpc(driver,divJuzgado,divOpcJuzgado, i1)   
+    #Empieza en 2 para probar
+    for i1 in range(2,t1):                                     
+        selectOpc(driver,divJuzgado,divOpcJuzgado, i1)   
 
     #Delitos - Modalidades  ----------------------------------------------  
     selectOpc(driver, divDelitos, divOpcDelitos, 0)        
@@ -254,56 +254,56 @@ for i1 in range(2,t1):
                     print(lista_dfs)
 
 
-lista_dfs
+    lista_dfs
 
-df_final = pd.concat(lista_dfs, ignore_index = True)
-df_final
+    df_final = pd.concat(lista_dfs, ignore_index = True)
+    df_final
 
-driver.quit()
+    driver.quit()
 
-driver = webdriver.Chrome()
-driver.maximize_window()
-driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
-indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'            
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    driver.get("https://www.pjenl.gob.mx/SentenciasPublicas/Modulos/Penales.aspx")
+    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'            
 
-print("Entra")
-if check_exists_by_xpath(driver,'//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'):
-    #Hay tabla    
-    if check_exists_by_xpath(driver, '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'):        
-        first = True
-        while True:
-            ind = getElementsByTag(driver,indexList, "a")
-            if ind[-1].get_attribute("text") != "...":
-                break
-            #First sirve para saber en que index empezar, porque solo las primeras 10 son de las forma [1,..., 10, "..."]
-            #En ese caso empezamos en 0.
-            #Las demás serán  ["...", n, n+1, ..., n+9, "..."] entonces hay que empezar en 1, sino se regresa a las anteriores
-            if first:
-                i = 0
-                first=False
-            else:
-                i=1
-            start = True
-            while ind[-1].get_attribute("text") == "...":  
-                checkTable(driver,False) 
-                #Por alguna razón después de recorrer la tabla cambia el html y el encabezado se hace parte
-                # de las filas y deja de existir el thead
-                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
+    print("Entra")
+    if check_exists_by_xpath(driver,'//\*[@id="ContentPlaceHolder1_gdvPenal"]/thead/tr/th[2]'):
+        #Hay tabla    
+        if check_exists_by_xpath(driver, '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'):        
+            first = True
+            while True:
                 ind = getElementsByTag(driver,indexList, "a")
-                ind[i].click()           
-                if(ind[i].get_attribute("text") == "..."):
-                    break                                
-                i+=1
-                #Este es opcional, hay que buscar una manera de saber cuando ya cargó la página                
+                if ind[-1].get_attribute("text") != "...":
+                    break
+                #First sirve para saber en que index empezar, porque solo las primeras 10 son de las forma [1,..., 10, "..."]
+                #En ese caso empezamos en 0.
+                #Las demás serán  ["...", n, n+1, ..., n+9, "..."] entonces hay que empezar en 1, sino se regresa a las anteriores
+                if first:
+                    i = 0
+                    first=False
+                else:
+                    i=1
+                start = True
+                while ind[-1].get_attribute("text") == "...":  
+                    checkTable(driver,False) 
+                    #Por alguna razón después de recorrer la tabla cambia el html y el encabezado se hace parte
+                    # de las filas y deja de existir el thead
+                    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[22]/td/table/tbody/tr'                                
+                    ind = getElementsByTag(driver,indexList, "a")
+                    ind[i].click()           
+                    if(ind[i].get_attribute("text") == "..."):
+                        break                                
+                    i+=1
+                    #Este es opcional, hay que buscar una manera de saber cuando ya cargó la página                
+                    time.sleep(30)
+                    driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)  
+                    #Después de que cambiamos de página el html regresa a lo normal y el thead ya existe de nuevo
+                    indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
+                    ind = getElementsByTag(driver,indexList, "a")              
                 time.sleep(30)
-                driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)  
-                #Después de que cambiamos de página el html regresa a lo normal y el thead ya existe de nuevo
-                indexList = '//\*[@id="ContentPlaceHolder1_gdvPenal"]/tbody/tr[21]/td/table/tbody/tr'
-                ind = getElementsByTag(driver,indexList, "a")              
-            time.sleep(30)
-        #Ya estamos en la última página de sentencias
-        checkTable(driver,False)
-        
+            #Ya estamos en la última página de sentencias
+            checkTable(driver,False)
+
                 
     else:
         checkTable(driver,True)
