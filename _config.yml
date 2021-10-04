@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: 'Sentencias transparentes: un ejercicio de justicia'
+title: 'Justicia transparente'
 email: datalabitam@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Queremos igualdad. Queremos transparencia. Queremos justicia.
