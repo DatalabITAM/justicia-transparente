@@ -4,32 +4,28 @@
 
 layout: home
 ---
+Octubre de 2021
+
 > Debemos acometer una evolución profunda. No queremos un proceso de apertura simulada, sino ejercicios de justicia abierta que ayuden a este país a resolver conflictos. -- Edna Jaime
 
+# ¿Quiénes somos?
 
-Bienvenidos a nuestro proyecto :)
-
-
-# Objetivos
-El objetivo del proyecto es hacer que la justicia sea transparente y accesible para más personas. Pretendemos extraer, organizar, resumir y publicar información del sistema de justicia para que pueda ser analizada por investigadores, estudiantes, abogados y abogadas o cualquier persona con el interés de hacerlo. 
+Justicia Transparente es un proyecto del DataLab, un grupo interdisciplinario conformado por estudiantes del Instituto Tecnológico Autónomo de México. Buscamos fomentar el acceso a la justicia a través de la transparencia y el análisis de sentencias públicas. A través de esta base de datos, pretendemos extraer, organizar, y analizar las sentencias publicadas por los Poderes Judiciales de cada Estado de la República. El análisis de sentencias nos permitirá dar cuenta de cómo se juzga en México y qué se tiene que mejorar para crear un México más justo. 
 
 # ¿Por qué lo hacemos?
-La longitud y el tipo de lenguaje utilizado en las sentencias constituye un obstáculo para el acceso y análisis del sistema de justicia. Creemos que los mexicanos y mexicanas, así como el estado de derecho, pueden beneficiarse si se resume la información contenida en estos documentos, pues la complejidad de estos textos es innecesaria y se puede y debe simplificar para que más gente tenga acceso a la justicia. Ponemos en duda que se esté impartiendo justicia en el país y por eso emprendemos este proyecto.
 
-# ¿Qué queremos lograr?
-Queremos que la justicia pueda ser accesible, transparente y cuestionada.
+La longitud y el tipo de lenguaje utilizado en las sentencias es un obstáculo para el acceso y análisis del sistema de justicia en México. Creemos que sistematizar las sentencias permitirá que los particulares puedan acceder a las sentencias públicas de una forma más eficiente, y, por lo tanto, más transparente. Por otro lado, extraer datos de las sentencias será una forma de obtener información de estas sin tener que enfrentarse al lenguaje jurídico complejo empleado por los juzgadores. Actualmente, se tiene poca información acerca de las prácticas de cada juzgado de México. Estamos convencidos de que es necesario tener esta información para lograr exigir un México más justo y transparente. 
 
-# Nuestro proceso
-Primero acotamos el proyecto a las sentencias de Nuevo León en materia penal. Después, debimos familiarizarnos con el lenguaje presentado en ellas mientras el equipo **poner aquí lo que Emilio describe del proceso de webscapping y demás**. Posteriormente utilizaremos herramientas de inteligencia artificial y aprendizaje automático para extraer la información de los documentos y crear una base de datos con lo más relevante que contienen las sentencias. Al final, se presentará información visual y gráfica como nuestra propuesta de un primer análisis de la base de datos, confiando que las personas interesadas puedan construir sobre él.
+# Nuestro proceso 
 
+Como primer paso, evaluamos qué estados estaban cumpliendo con su obligación de publicas sus sentencias. Como resultado, optamos por trabajar con las sentencias del estado de Nuevo León, y específicamente, decidimos hacer un análisis de sus sentencias en materia penal. Se comenzó por webscrappear (con Python y librerías) la captura de sentencias e información del sitio web gubernamental. Hemos conseguido recopilar, a través de nuestro web scraping, sentencias del estado de Coahuila y Nuevo León sin ningún tipo de problema. El principal reto es que cada estado tiene una forma diferente de presentar información, lo cual implica que se debe un algoritmo específico por sitio. 
 
-# Siguientes pasos:
-Tener un servidor dedicado para almacenar/preservar los documentos originales (PDFs)
-Investigar como usar herramientas de procesamiento de lenguaje natural [lo de OpenAI o algun servicio en la nube] para procesar de manera automatizada y con lenguaje natural las sentencias. Queremos extraer la informacion de forma concreta y facil de entender.
-Generar una API de consulta abierta.
-[Revisar, editar y agregar pasos]
+A la par, preparamos las herramientas que serían necesarias para hacer el análisis de las sentencias. De tal forma que, cada integrante del equipo leyó numerosas sentencias para dar cuenta de la información importante que debíamos extraer de cada una. Para complementar esto, también se consultó a abogados y académicos. Una vez terminada esta etapa investigamos qué herramientas de programación serían las óptimas para extraer esta información de forma eficaz.
 
+Actualmente, estamos utilizando el procesamiento de lenguaje natural y el aprendizaje automático para extraer datos de las sentencias en materia penal del estado de Nueo León. Tenemos como objetivo presentar esta información a través de visualizaciones y su interpretación. Buscamos que los usuarios que hagan uso de la información publicada en Justicia Transparente puedan usarla y construir sobre ella.  
 
-**Descarga nuestra base de datos aquí:**
+***
+
+### Descarga nuestra base de datos aquí:
 [bd_sentencias_nuevo_leon.csv](https://github.com/DatalabITAM/justicia-transparente/files/7229974/bd_sentencias_nuevo_leon.csv)
 
