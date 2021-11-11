@@ -31,4 +31,14 @@ Actualmente, estamos utilizando el procesamiento de lenguaje natural y el aprend
 
 ![Cuenta de delitos en materia penal Nuevo León 2016 - 2021](https://user-images.githubusercontent.com/23329703/139119172-2a077e6d-40f1-4714-b848-c1339226086a.png)
 ![Cuenta de delitos en materia penal (ajustada sin robo ni violencia) Nuevo León 2016 - 2021](https://user-images.githubusercontent.com/23329703/139119185-b1321d03-86c5-4247-9b1c-f2ab31ec990d.png)
+
+<div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%;
+ padding-bottom: 48px; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
+ border-radius: 8px; will-change: transform;">
+  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
+    src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAEuE9bMehc&#x2F;view?embed">
+  </iframe>
+</div>
+<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAEuE9bMehc&#x2F;view?utm_content=DAEuE9bMehc&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">sentencias por estado</a> by Leslie Brenes
+
 [sentencias por estado.pdf](https://github.com/DatalabITAM/justicia-transparente/files/7517862/sentencias.por.estado.pdf)
